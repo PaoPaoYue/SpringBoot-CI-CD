@@ -1,2 +1,3 @@
 # SpringBoot-CI-CD
-### An demo of SpringBoot REST API service and auto deployment
+### A demo of SpringBoot REST API service
+### Use auto deployment to deploy service
