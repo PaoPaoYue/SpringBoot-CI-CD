@@ -29,7 +29,7 @@ class DemoApplicationTests {
 	@Test
 	void contextLoads() {
 
-		Student student = mapper.getStudent(0);
+		Student student = mapper.getStudent(1);
 		logger.info(student.toString());
 		logger.info("success");
 	}
