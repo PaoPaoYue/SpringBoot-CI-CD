@@ -28,7 +28,7 @@ class DemoApplicationTests {
 
 	@Test
 	void contextLoads() {
-		logger.info(Boolean.toString(ioc.containsBean("sqlSession")));
+
 		Student student = mapper.getStudent(1);
 		logger.info(student.toString());
 		logger.info("success");
