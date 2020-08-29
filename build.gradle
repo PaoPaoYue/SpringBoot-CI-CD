@@ -27,7 +27,7 @@ dependencies {
 }
 
 bootBuildImage {
-	imageName = "myorg/demo"
+	imageName = "ypp/springboot-test"
 }
 
 test {
