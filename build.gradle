@@ -26,8 +26,8 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
-bootBuildImage {
-	imageName = "ypp/springboot-test"
+bootRun {
+	systemProperties(System.properties)
 }
 
 test {
