@@ -21,11 +21,25 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
-    - name: Build and push Docker images
+    - name: Build and push Docker image
       uses: docker/build-push-action@v1.1.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: daocloud.io/py846260131/springboot-ci-cd
         registry: daocloud.io
-        tags: lates
+        tags: latest
+    - name: deloy Docker image remotely
+      uses: docker://evaneos/ssh-action:0.1.0
+      with:
+        hosts: 49.234.113.197
+        user: ubuntu
+        private_key: ${{ secrets.PRIVATE_SSH_KEY }}
+        password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
+        commands: | 
+          echo "Hello world!"
+          # docker stop springboot-test
+          # docker rm springboot-test
+          # docker pull daocloud.io/py846260131/springboot-ci-cd
+          # docker run -d -p 5100:5100 -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=dev --name=springboot-test daocloud.io/py846260131/springboot-ci-cd
+
