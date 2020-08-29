@@ -26,10 +26,6 @@ dependencies {
 	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 }
 
-bootRun {
-	systemProperties(System.properties)
-}
-
 test {
 	useJUnitPlatform()
 }
