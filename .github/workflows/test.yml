@@ -22,12 +22,13 @@ jobs:
       if: endsWith(github.ref, '/master')
       run: |
         echo "::set-env name=ENVIRONMENT::prod"
-    - name: executing remote ssh commands
-      uses: appleboy/ssh-action@master
+    - name: deloy Docker image remotely
+      uses: docker://evaneos/ssh-action:0.1.0
       with:
-        host: ${{ secrets.PRIVATE_SSH_HOST }}
-        username: ${{ secrets.PRIVATE_SSH_USER }}
+        hosts: ${{ secrets.PRIVATE_SSH_HOST }}
+        user: ${{ secrets.PRIVATE_SSH_USER }}
+        private_key: ${{ secrets.PRIVATE_SSH_KEY }}
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
-        key: ${{ secrets.PRIVATE_SSH_KEY }}
-        script: |
+        commands: | 
+          echo "Hello world!"
           echo $ENVIRONMENT
