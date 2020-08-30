@@ -44,4 +44,4 @@ jobs:
         script: | 
           echo "Hello world!"
           echo ${{env.ENVIRONMENT}}
-          eccho ${{github.event.inputs.version}}
+          echo ${{github.event.inputs.version}}
