@@ -32,8 +32,8 @@ jobs:
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.environment}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
         echo "::set-env name=PORT::${{github.event.inputs.port}}"
-        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
-        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
+        echo "::set-env name=CONTAINER::"${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}""
+        echo "::set-env name=IMAGE::"${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}""
         echo ${{env.IMAGE}}
         echo ${{env.CONTAINER}}
     - uses: actions/checkout@v2
