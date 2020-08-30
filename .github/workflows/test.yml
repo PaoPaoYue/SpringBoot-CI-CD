@@ -27,7 +27,6 @@ jobs:
       with:
         hosts: ${{ secrets.PRIVATE_SSH_HOST }}
         user: ${{ secrets.PRIVATE_SSH_USER }}
-        private_key: ${{ secrets.PRIVATE_SSH_KEY }}
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         commands: | 
           echo "Hello world!"
