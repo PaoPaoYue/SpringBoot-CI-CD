@@ -32,10 +32,7 @@ jobs:
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.environment}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
         echo "::set-env name=PORT::${{github.event.inputs.port}}"
-        echo "::set-env name=CONTAINER::"${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}""
-        echo "::set-env name=IMAGE::"${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}""
-        echo ${{env.IMAGE}}
-        echo ${{env.CONTAINER}}
+
     - uses: actions/checkout@v2
     - name: deploy to remote server
       uses: appleboy/ssh-action@master
@@ -45,10 +42,10 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          echo ${{env.IMAGE}}
-          echo ${{env.CONTAINER}}
-          # docker pull ${{env.IMAGE}}
-          # docker stop ${{env.CONTAINER}}
-          # docker rm ${{env.CONTAINER}}
-          # docker rmi ${{env.IMAGE}}
-          # docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
+          echo ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
+          echo ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          # docker stop ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
+          # docker rm ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
+          # docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          # docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          # docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}} # docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
