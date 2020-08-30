@@ -14,7 +14,7 @@ on:
         description: 'environment profile name for production'
         required: true
         default: 'prod'
-      verion:
+      version:
         description: 'docker version (default 0.0.1)'
         required: true
         default: '0.0.1'
@@ -31,10 +31,12 @@ jobs:
       if: endsWith(github.ref, '/dev')
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
+        echo "::set-env name=VERSION::${{github.event.inputs.version}}"
     - name: Set env to production
       if: endsWith(github.ref, '/master')
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
+        echo "::set-env name=VERSION::${{github.event.inputs.version}}"
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
@@ -44,4 +46,4 @@ jobs:
         script: | 
           echo "Hello world!"
           echo ${{env.ENVIRONMENT}}
-          echo ${{github.event.inputs.version}}
+          echo ${{env.VERSION}}
