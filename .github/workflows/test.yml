@@ -42,9 +42,9 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          sudo docker docker stop ${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
-          sudo docker docker rm ${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
-          sudo docker docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
-          sudo docker docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
-          sudo docker docker run -d -p ${{env.APP_PORT}}:${{env.APP_PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          sudo docker stop ${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
+          sudo docker rm ${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}
+          sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          sudo docker run -d -p ${{env.APP_PORT}}:${{env.APP_PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
 
