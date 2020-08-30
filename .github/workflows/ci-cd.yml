@@ -6,12 +6,8 @@ name: springboot-ci-cd
 on:
   workflow_dispatch:
     inputs:
-      env_dev:
-        description: 'environment profile name for development'
-        required: true
-        default: 'dev'
-      env_prod: 
-        description: 'environment profile name for production'
+      environment:
+        description: 'environment profile name'
         required: true
         default: 'prod'
       version:
@@ -30,22 +26,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set env to development
-      if: endsWith(github.ref, '/dev')
+    - name: Set environment variables
       run: |
-        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
+        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.environment}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
-        echo "::set-env name=PORT::${{github.event.inputs.port}}"
-        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
-        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
-    - name: Set env to production
-      if: endsWith(github.ref, '/master')
-      run: |
-        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
-        echo "::set-env name=VERSION::${{github.event.inputs.version}}"
-        echo "::set-env name=PORT::${{github.event.inputs.port}}"
-        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
-        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
+        echo "::set-env name=APP_PORT::${{github.event.inputs.port}}"
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
@@ -61,6 +46,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+        registry: ${{ secrets.DOCKER_REGISTRY }}
         tags: ${{env.ENVIRONMENT}}-${{env.VERSION}}
     - name: deploy to remote server
       uses: appleboy/ssh-action@master
@@ -70,9 +56,9 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          # docker pull ${{env.IMAGE}}
-          # docker stop ${{env.CONTAINER}}
-          # docker rm ${{env.CONTAINER}}
-          # docker rmi ${{env.IMAGE}}
-          # docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
+          sudo docker stop ${{ secrets.DOCKER_REPO }}_${{env.ENVIRONMENT}}
+          sudo docker rm ${{ secrets.DOCKER_REPO }}_${{env.ENVIRONMENT}}
+          sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
+          sudo docker run -d -p ${{env.APP_PORT}}:${{env.APP_PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{ secrets.DOCKER_REPO }}_${{env.ENVIRONMENT}} ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}
 
