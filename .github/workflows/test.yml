@@ -31,7 +31,7 @@ jobs:
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.environment}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
-        echo "::set-env name=PORT::${{github.event.inputs.port}}"
+        echo "::set-env name=APP_PORT::${{github.event.inputs.port}}"
 
     - uses: actions/checkout@v2
     - name: deploy to remote server
