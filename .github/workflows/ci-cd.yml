@@ -31,11 +31,15 @@ jobs:
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
+        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
+        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
     - name: Set env to production
       if: endsWith(github.ref, '/master')
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
+        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
+        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
     - uses: actions/checkout@v2
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
@@ -50,8 +54,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: py846260131/springboot-ci-cd
-        registry: daocloud.io
+        repository: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
         tags: ${{env.ENVIRONMENT}}-${{env.VERSION}}
     - name: deploy to remote server
       uses: appleboy/ssh-action@master
@@ -61,8 +64,9 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          # docker stop springboot-test
-          # docker rm springboot-test
-          # docker pull daocloud.io/py846260131/springboot-ci-cd
-          # docker run -d -p 5100:5100 -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=dev --name=springboot-test daocloud.io/py846260131/springboot-ci-cd
+          # docker stop ${{env.CONTAINER}}
+          # docker rm ${{env.CONTAINER}}
+          # docker rmi ${{env.IMAGE}}
+          # docker pull ${{env.IMAGE}}
+          # docker run -d -p 5100:5100 -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
 
