@@ -30,4 +30,4 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         commands: | 
           echo "Hello world!"
-          echo $ENVIRONMENT
+          echo ${{env.ENVIRONMENT}}
