@@ -47,7 +47,8 @@ jobs:
         echo "::set-env name=DOCKER_REPO::${{github.event.inputs.docker_repo}}"
         echo "::set-env name=DOCKER_USER::${{github.event.inputs.docker_user}}"
         echo "::set-env name=DOCKER_REGISTRY::${{github.event.inputs.docker_registry}}"
-
+        echo "::set-env name=DOCKER_IMAGE::${{env.DOCKER_REGISTRY}}/${{env.DOCKER_REPO}}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
+        echo "::set-env name=DOCKER_CONTAINER::${{${{env.DOCKER_REPO}}##*/}}_${{env.ENVIRONMENT}}"
     - uses: actions/checkout@v2
     - name: deploy to remote server
       uses: appleboy/ssh-action@master
@@ -57,9 +58,8 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          sudo docker stop ${{env.DOCKER_REPO##*/}}_${{env.ENVIRONMENT}}
-          sudo docker rm ${{env.DOCKER_REPO##*/}}_${{env.ENVIRONMENT}}
-          sudo docker rmi ${{env.DOCKER_REGISTRY}}/${{env.DOCKER_REPO}}:${{env.ENVIRONMENT}}-${{env.VERSION}}
-          sudo docker pull ${{env.DOCKER_REGISTRY}}/${{env.DOCKER_REPO}}:${{env.ENVIRONMENT}}-${{env.VERSION}}
-          sudo docker run -d -p ${{env.APP_PORT}}:${{env.APP_PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.DOCKER_REPO##*/}}_${{env.ENVIRONMENT}} ${{env.DOCKER_REGISTRY}}/${{env.DOCKER_REPO}}:${{env.ENVIRONMENT}}-${{env.VERSION}}
-
+          sudo docker stop ${{env.DOCKER_CONTAINER}}
+          sudo docker rm ${{env.DOCKER_CONTAINER}}
+          sudo docker rmi ${{env.DOCKER_IMAGE}}
+          sudo docker pull ${{env.DOCKER_IMAGE}}
+          sudo docker run -d -p ${{env.APP_PORT}}:${{env.APP_PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.DOCKER_CONTAINER}} ${{env.DOCKER_IMAGE}}
