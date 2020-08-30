@@ -22,7 +22,7 @@ on:
 
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -40,7 +40,7 @@ jobs:
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.HPRIVATE_SSH_OST }}
+        host: ${{ secrets.PRIVATE_SSH_HOST }}
         username: ${{ secrets.PRIVATE_SSH_USERNAME }}
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
