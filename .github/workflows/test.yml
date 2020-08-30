@@ -1,0 +1,33 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: test
+
+on:
+  workflow_dispatch
+
+
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set env to development
+      if: endsWith(github.ref, '/dev')
+      run: |
+        echo "::set-env name=ENVIRONMENT::dev"
+    - name: Set env to production
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "::set-env name=ENVIRONMENT::prod"
+    - name: executing remote ssh commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.PRIVATE_SSH_HOST }}
+        username: ${{ secrets.PRIVATE_SSH_USER }}
+        password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
+        key: ${{ secrets.PRIVATE_SSH_KEY }}
+        script: |
+          echo $ENVIRONMENT
