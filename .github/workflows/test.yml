@@ -18,6 +18,10 @@ on:
         description: 'docker version (default 0.0.1)'
         required: true
         default: '0.0.1'
+      port:
+        description: 'application port'
+        required: true
+        default: '5110'
 
 
 
@@ -32,12 +36,20 @@ jobs:
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
+        echo "::set-env name=PORT::${{github.event.inputs.port}}"
+        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
+        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
+    - uses: actions/checkout@v2
     - name: Set env to production
       if: endsWith(github.ref, '/master')
       run: |
         echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
-    - name: executing remote ssh commands using password
+        echo "::set-env name=PORT::${{github.event.inputs.port}}"
+        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
+        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
+    - uses: actions/checkout@v2
+    - name: deploy to remote server
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.PRIVATE_SSH_HOST }}
@@ -45,5 +57,8 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          echo ${{env.ENVIRONMENT}}
-          echo ${{env.VERSION}}
+          docker stop ${{env.CONTAINER}}
+          docker rm ${{env.CONTAINER}}
+          docker rmi ${{env.IMAGE}}
+          docker pull ${{env.IMAGE}}
+          docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
