@@ -28,7 +28,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         repository: py846260131/springboot-ci-cd
         registry: daocloud.io
-        tags: latest
+        tags: $GITHUB_REF
     - name: deloy Docker image remotely
       uses: docker://evaneos/ssh-action:0.1.0
       with:
