@@ -6,12 +6,8 @@ name: test
 on:
   workflow_dispatch:
     inputs:
-      env_dev:
-        description: 'environment profile name for development'
-        required: true
-        default: 'dev'
-      env_prod: 
-        description: 'environment profile name for production'
+      environment:
+        description: 'environment profile name'
         required: true
         default: 'prod'
       version:
@@ -31,19 +27,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set env to development
-      if: endsWith(github.ref, '/dev')
+    - name: Set environment variables
       run: |
-        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
-        echo "::set-env name=VERSION::${{github.event.inputs.version}}"
-        echo "::set-env name=PORT::${{github.event.inputs.port}}"
-        echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
-        echo "::set-env name=IMAGE::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}-${{env.VERSION}}"
-    - uses: actions/checkout@v2
-    - name: Set env to production
-      if: endsWith(github.ref, '/master')
-      run: |
-        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
+        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.environment}}"
         echo "::set-env name=VERSION::${{github.event.inputs.version}}"
         echo "::set-env name=PORT::${{github.event.inputs.port}}"
         echo "::set-env name=CONTAINER::${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}:${{env.ENVIRONMENT}}"
@@ -57,8 +43,10 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
-          docker pull ${{env.IMAGE}}
-          docker stop ${{env.CONTAINER}}
-          docker rm ${{env.CONTAINER}}
-          docker rmi ${{env.IMAGE}}
-          docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
+          echo ${{env.IMAGE}}
+          echo ${{env.CONTAINER}}
+          # docker pull ${{env.IMAGE}}
+          # docker stop ${{env.CONTAINER}}
+          # docker rm ${{env.CONTAINER}}
+          # docker rmi ${{env.IMAGE}}
+          # docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
