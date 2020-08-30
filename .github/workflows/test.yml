@@ -57,8 +57,8 @@ jobs:
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
         script: | 
           echo "Hello world!"
+          docker pull ${{env.IMAGE}}
           docker stop ${{env.CONTAINER}}
           docker rm ${{env.CONTAINER}}
           docker rmi ${{env.IMAGE}}
-          docker pull ${{env.IMAGE}}
           docker run -d -p ${{env.PORT}}:${{env.PORT}} -p 10200:10200 -e JAVA_OPTS=-Dspring.profiles.active=${{env.ENVIRONMENT}} --name=${{env.CONTAINER}} ${{env.IMAGE}}
