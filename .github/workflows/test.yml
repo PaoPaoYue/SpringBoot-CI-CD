@@ -4,7 +4,20 @@
 name: test
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      env_dev:
+        description: 'environment profile name for development'
+        required: true
+        default: 'dev'
+      env_prod: 
+        description: 'environment profile name for production'
+        required: true
+        default: 'prod'
+      verion:
+        description: 'docker version (default 0.0.1)'
+        required: true
+        default: '0.0.1'
 
 
 
@@ -17,17 +30,18 @@ jobs:
     - name: Set env to development
       if: endsWith(github.ref, '/dev')
       run: |
-        echo "::set-env name=ENVIRONMENT::dev"
+        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_dev}}"
     - name: Set env to production
       if: endsWith(github.ref, '/master')
       run: |
-        echo "::set-env name=ENVIRONMENT::prod"
-    - name: deloy Docker image remotely
-      uses: docker://evaneos/ssh-action:0.1.0
+        echo "::set-env name=ENVIRONMENT::${{github.event.inputs.env_prod}}"
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
       with:
-        hosts: ${{ secrets.PRIVATE_SSH_HOST }}
-        user: ${{ secrets.PRIVATE_SSH_USER }}
+        host: ${{ secrets.HPRIVATE_SSH_OST }}
+        username: ${{ secrets.PRIVATE_SSH_USERNAME }}
         password: ${{ secrets.PRIVATE_SSH_PASSWORD }}
-        commands: | 
+        script: | 
           echo "Hello world!"
           echo ${{env.ENVIRONMENT}}
+          eccho ${{github.event.inputs.version}}
