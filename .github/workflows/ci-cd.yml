@@ -71,10 +71,10 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v1.1.0
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: ${{ env.DOCKER_USER }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_REPO }}
-        registry: ${{ secrets.DOCKER_REGISTRY }}
+        repository: ${{ env.DOCKER_REPO }}
+        registry: ${{ env.DOCKER_REGISTRY }}
         tags: ${{env.ENVIRONMENT}}-${{env.VERSION}}
     - name: deploy to remote server
       uses: appleboy/ssh-action@master
